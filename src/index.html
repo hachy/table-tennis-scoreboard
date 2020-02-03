@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <title>Table Tennis Scoreboard</title>
+    <link href="https://fonts.googleapis.com/css?family=Electrolize&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <div class="container">
+      <button class="score" id="scoreA">0</button>
+      <button class="score" id="scoreB">0</button>
+
+      <div id="gameA">0</div>
+      <div id="gameB">0</div>
+
+      <div id="gamegraphicA">
+        <div class="gg"></div>
+        <div class="gg"></div>
+        <div class="gg"></div>
+        <div class="gg"></div>
+        <div class="gg"></div>
+        <div class="gg"></div>
+        <div class="gg"></div>
+      </div>
+      <div id="gamegraphicB">
+        <div class="gg"></div>
+        <div class="gg"></div>
+        <div class="gg"></div>
+        <div class="gg"></div>
+        <div class="gg"></div>
+        <div class="gg"></div>
+        <div class="gg"></div>
+      </div>
+
+      <button id="serviceA" class="service current"></button>
+      <button id="serviceB" class="service"></button>
+
+      <div id="btns">
+        <button class="btn" id="undo">UNDO</button>
+        <button class="btn" id="reset">RESET ALL</button>
+        <button class="btn" id="change-ends">CHANGE ENDS</button>
+        <button class="btn" id="next-game" disabled>NEXT GAME</button>
+      </div>
+    </div>
+
+    <script src="./index.ts"></script>
+  </body>
+</html>

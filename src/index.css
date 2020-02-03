@@ -1,0 +1,152 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  margin: 0;
+  color: #f2f2f2;
+  font-weight: 400;
+  font-size: 1.6em;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
+  font-family: 'Rajdhani', sans-serif;
+  line-height: 1.5;
+  background: #222;
+}
+
+.container {
+  display: grid;
+  grid-row-gap: 2rem;
+  grid-template-areas:
+    'sA gA gB sB'
+    'sA ggA ggB sB'
+    'serviceA ggA ggB serviceB'
+    'btn btn btn btn';
+  grid-template-rows: 1fr 1fr auto auto;
+  grid-template-columns: 35% 15% 15% 35%;
+  align-items: stretch;
+  min-height: 100vh;
+}
+
+#scoreA,
+#scoreB,
+#gameA,
+#gameB {
+  color: #fff;
+  font-family: 'Electrolize', sans-serif;
+  background: #000;
+}
+
+#scoreA,
+#scoreB {
+  margin: 2rem 2rem 0;
+  font-weight: 800;
+  font-size: 30rem;
+  border: 0px solid transparent;
+}
+
+#scoreA {
+  grid-area: sA;
+}
+
+#scoreB {
+  grid-area: sB;
+}
+
+#gameA,
+#gameB {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-weight: 500;
+  font-size: 10rem;
+}
+
+#gameA {
+  margin: 2rem 1rem 2rem 0;
+  grid-area: gA;
+}
+
+#gameB {
+  margin: 2rem 0 2rem 1rem;
+  grid-area: gB;
+}
+
+#gamegraphicA {
+  margin: 2rem 1rem 2rem 0;
+  grid-area: ggA;
+}
+
+#gamegraphicB {
+  margin: 2rem 0 2rem 1rem;
+  grid-area: ggB;
+}
+
+.gg {
+  width: 100%;
+  height: 20px;
+  margin-bottom: 10px;
+  background: #555;
+  border-radius: 50px;
+}
+
+.gg.active {
+  background: #fffc2e;
+}
+
+#serviceA,
+#serviceB {
+  height: 20px;
+  margin: 0 20px;
+  border: 0px solid transparent;
+  background: #555;
+  border-radius: 50px;
+}
+
+#serviceA {
+  grid-area: serviceA;
+}
+
+#serviceB {
+  grid-area: serviceB;
+}
+
+.service.current {
+  background: #fffc2e !important;
+  box-shadow: 0px 0px 7px rgba(255, 255, 255, 0.9);
+}
+
+#btns {
+  grid-area: btn;
+}
+
+.btn {
+  cursor: pointer;
+  border-radius: 0.25rem;
+  font-size: 1.6rem;
+  background: transparent;
+  color: #fff;
+  display: inline-block;
+  font-weight: 400;
+  border: 1px solid #fff;
+  margin: 2rem 1rem;
+  padding: 2rem 3rem;
+  transition: all 0.2s;
+}
+
+.btn:hover:not(:disabled) {
+  color: #fff;
+  background-color: #d9d88d;
+}
+
+.btn:disabled {
+  color: #777;
+  border: 1px solid #777;
+}
