@@ -1,6 +1,13 @@
+interface Score {
+  scoreA: number;
+  gameA: number;
+  gameB: number;
+  scoreB: number;
+}
+
 class Scoreboard {
-  history: number[][];
-  current: number[];
+  history: Score[];
+  current: Score;
   sA: HTMLButtonElement;
   sB: HTMLButtonElement;
   gA: HTMLButtonElement;
@@ -12,8 +19,9 @@ class Scoreboard {
 
   constructor() {
     this.history = [];
-    this.current = [0, 0, 0, 0];
-    this.history.push(this.current.slice());
+
+    this.current = {scoreA: 0, gameA: 0, gameB: 0, scoreB: 0};
+    this.history.push(Object.assign({}, this.current));
 
     this.sA = document.getElementById('scoreA') as HTMLButtonElement;
     this.sB = document.getElementById('scoreB') as HTMLButtonElement;
@@ -48,18 +56,19 @@ class Scoreboard {
   countUp(el: HTMLButtonElement, isA: boolean): void {
     el.textContent = `${parseInt(el.textContent!) + 1}`;
     if (isA) {
-      this.current[0]++;
+      this.current.scoreA++;
     } else {
-      this.current[3]++;
+      this.current.scoreB++;
     }
-    this.history.push(this.current.slice());
 
     this.service();
     this.win();
+
+    this.history.push(Object.assign({}, this.current));
   }
 
   service() {
-    let sum = this.current[0] + this.current[3];
+    let sum = this.current.scoreA + this.current.scoreB;
     if ((sum % 2 === 0 && sum < 20) || sum >= 20) {
       Array.prototype.forEach.call(this.serviceBtns, el => {
         el.classList.toggle('current');
@@ -69,16 +78,16 @@ class Scoreboard {
 
   win(): boolean {
     let w = false;
-    let a = this.current[0];
-    let b = this.current[3];
+    let a = this.current.scoreA;
+    let b = this.current.scoreB;
     let sum = a + b;
     let diff = Math.abs(a - b);
     if ((sum < 20 && (a >= 11 || b >= 11)) || (sum >= 20 && diff >= 2)) {
       this.btnDisable(false);
       if (a > b) {
-        this.current[1]++;
+        this.current.gameA++;
       } else {
-        this.current[2]++;
+        this.current.gameB++;
       }
       w = true;
     }
@@ -93,7 +102,12 @@ class Scoreboard {
 
     this.history.pop();
     let prev = this.history.length - 1;
-    [this.current[0], this.current[1], this.current[2], this.current[3]] = [this.history[prev][0], this.history[prev][1], this.history[prev][2], this.history[prev][3]];
+    [this.current.scoreA, this.current.gameA, this.current.gameB, this.current.scoreB] = [
+      this.history[prev].scoreA,
+      this.history[prev].gameA,
+      this.history[prev].gameB,
+      this.history[prev].scoreB,
+    ];
     this.display();
 
     if (this.win()) {
@@ -104,9 +118,9 @@ class Scoreboard {
   }
 
   resetAll() {
-    this.current = [0, 0, 0, 0];
     this.history = [];
-    this.history.push(this.current.slice());
+    this.current = {scoreA: 0, gameA: 0, gameB: 0, scoreB: 0};
+    this.history.push(Object.assign({}, this.current));
     this.display();
   }
 
@@ -128,19 +142,19 @@ class Scoreboard {
 
   swap(next: boolean = false) {
     if (next) {
-      this.current[0] = 0;
-      this.current[3] = 0;
+      this.current.scoreA = 0;
+      this.current.scoreB = 0;
     }
-    [this.current[0], this.current[1], this.current[2], this.current[3]] = [this.current[3], this.current[2], this.current[1], this.current[0]];
+    [this.current.scoreA, this.current.gameA, this.current.gameB, this.current.scoreB] = [this.current.scoreB, this.current.gameB, this.current.gameA, this.current.scoreA];
     this.display();
-    this.history.push(this.current.slice());
+    this.history.push(Object.assign({}, this.current));
   }
 
   display() {
-    this.sA.textContent = `${this.current[0]}`;
-    this.gA.textContent = `${this.current[1]}`;
-    this.gB.textContent = `${this.current[2]}`;
-    this.sB.textContent = `${this.current[3]}`;
+    this.sA.textContent = `${this.current.scoreA}`;
+    this.gA.textContent = `${this.current.gameA}`;
+    this.gB.textContent = `${this.current.gameB}`;
+    this.sB.textContent = `${this.current.scoreB}`;
   }
 
   btnDisable(next: boolean = false) {
