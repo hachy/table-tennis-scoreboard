@@ -8,39 +8,51 @@ interface Score {
 class Scoreboard {
   history: Score[];
   current: Score;
+  ggHistory: number[][];
+  gamegraphic: number[];
+
   sA: HTMLButtonElement;
   sB: HTMLButtonElement;
   gA: HTMLButtonElement;
   gB: HTMLButtonElement;
+  ggA: HTMLDivElement;
+  ggB: HTMLDivElement;
   serviceBtns: HTMLCollection;
+  undoBtn: HTMLButtonElement;
   changeEndsBtn: HTMLButtonElement;
   nextGameBtn: HTMLButtonElement;
   player: number = 0;
 
   constructor() {
     this.history = [];
+    this.ggHistory = [];
 
     this.current = {scoreA: 0, gameA: 0, gameB: 0, scoreB: 0};
+    this.gamegraphic = Array(7).fill(0);
+
     this.history.push(Object.assign({}, this.current));
+    this.ggHistory.push(this.gamegraphic.slice());
 
     this.sA = document.getElementById('scoreA') as HTMLButtonElement;
     this.sB = document.getElementById('scoreB') as HTMLButtonElement;
     this.gA = document.getElementById('gameA') as HTMLButtonElement;
     this.gB = document.getElementById('gameB') as HTMLButtonElement;
     this.gB = document.getElementById('gameB') as HTMLButtonElement;
+    this.ggA = document.getElementById('gamegraphicA') as HTMLDivElement;
+    this.ggB = document.getElementById('gamegraphicB') as HTMLDivElement;
+    this.undoBtn = document.getElementById('undo') as HTMLButtonElement;
     this.serviceBtns = document.getElementsByClassName('service') as HTMLCollection;
     this.changeEndsBtn = document.getElementById('change-ends') as HTMLButtonElement;
     this.nextGameBtn = document.getElementById('next-game') as HTMLButtonElement;
 
-    let undoBtn = document.getElementById('undo') as HTMLButtonElement;
     let resetBtn = document.getElementById('reset') as HTMLButtonElement;
 
     this.sA.addEventListener('click', () => this.countUp(this.sA, true));
     this.sB.addEventListener('click', () => this.countUp(this.sB, false));
+    this.undoBtn.addEventListener('click', () => this.undo());
     this.changeEndsBtn.addEventListener('click', () => this.changeEnds());
     this.nextGameBtn.addEventListener('click', () => this.nextGame());
 
-    undoBtn.addEventListener('click', () => this.undo());
     resetBtn.addEventListener('click', () => this.resetAll());
 
     this.firstServer(this.player);
@@ -61,10 +73,15 @@ class Scoreboard {
       this.current.scoreB++;
     }
 
+    if (this.current.scoreA + this.current.scoreB !== 0) {
+      this.undoBtn.disabled = false;
+    }
+
     this.service();
     this.win();
 
     this.history.push(Object.assign({}, this.current));
+    this.ggHistory.push(this.gamegraphic.slice());
   }
 
   service() {
@@ -84,11 +101,6 @@ class Scoreboard {
     let diff = Math.abs(a - b);
     if ((sum < 20 && (a >= 11 || b >= 11)) || (sum >= 20 && diff >= 2)) {
       this.btnDisable(false);
-      if (a > b) {
-        this.current.gameA++;
-      } else {
-        this.current.gameB++;
-      }
       w = true;
     }
     return w;
@@ -119,8 +131,11 @@ class Scoreboard {
 
   resetAll() {
     this.history = [];
+    this.ggHistory = [];
     this.current = {scoreA: 0, gameA: 0, gameB: 0, scoreB: 0};
+    this.gamegraphic = Array(7).fill(0);
     this.history.push(Object.assign({}, this.current));
+    this.ggHistory.push(this.gamegraphic.slice());
     this.display();
   }
 
@@ -137,17 +152,48 @@ class Scoreboard {
   nextGame() {
     this.firstServer(this.player);
     this.btnDisable(true);
-    this.swap(true);
+    this.undoBtn.disabled = true;
+
+    // game
+    let gameSum = this.current.gameA + this.current.gameB;
+    if (this.current.scoreA > this.current.scoreB) {
+      this.current.gameA++;
+      this.gamegraphic[gameSum] = 1;
+    } else {
+      this.current.gameB++;
+      this.gamegraphic[gameSum] = 2;
+    }
+
+    // swap
+    [this.current.scoreA, this.current.gameA, this.current.gameB, this.current.scoreB] = [0, this.current.gameB, this.current.gameA, 0];
+    this.gamegraphic = this.gamegraphic.map(v => {
+      if (v !== 0) {
+        v = 3 - v;
+      }
+      return v;
+    });
+
+    // reset
+    this.history = [];
+    this.ggHistory = [];
+    this.history.push(Object.assign({}, this.current));
+    this.ggHistory.push(this.gamegraphic.slice());
+
+    this.display();
   }
 
-  swap(next: boolean = false) {
-    if (next) {
-      this.current.scoreA = 0;
-      this.current.scoreB = 0;
-    }
+  swap() {
     [this.current.scoreA, this.current.gameA, this.current.gameB, this.current.scoreB] = [this.current.scoreB, this.current.gameB, this.current.gameA, this.current.scoreA];
-    this.display();
+    this.gamegraphic = this.gamegraphic.map(v => {
+      if (v !== 0) {
+        v = 3 - v;
+      }
+      return v;
+    });
+
     this.history.push(Object.assign({}, this.current));
+    this.ggHistory.push(this.gamegraphic.slice());
+    this.display();
   }
 
   display() {
@@ -155,6 +201,21 @@ class Scoreboard {
     this.gA.textContent = `${this.current.gameA}`;
     this.gB.textContent = `${this.current.gameB}`;
     this.sB.textContent = `${this.current.scoreB}`;
+
+    this.gamegraphic.forEach((value, i) => {
+      if (this.ggA.children[i] !== undefined) {
+        if (value === 0) {
+          this.ggA.children[i].classList.remove('active');
+          this.ggB.children[i].classList.remove('active');
+        } else if (value === 1) {
+          this.ggA.children[i].classList.add('active');
+          this.ggB.children[i].classList.remove('active');
+        } else if (value === 2) {
+          this.ggA.children[i].classList.remove('active');
+          this.ggB.children[i].classList.add('active');
+        }
+      }
+    });
   }
 
   btnDisable(next: boolean = false) {
