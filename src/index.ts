@@ -130,6 +130,7 @@ class Scoreboard {
   }
 
   resetAll() {
+    this.btnDisable(true);
     this.history = [];
     this.ggHistory = [];
     this.current = {scoreA: 0, gameA: 0, gameB: 0, scoreB: 0};
@@ -216,6 +217,13 @@ class Scoreboard {
         }
       }
     });
+    if (this.current.gameA + this.current.gameB >= 7) {
+      this.sA.disabled = true;
+      this.sB.disabled = true;
+      this.changeEndsBtn.disabled = true;
+      this.nextGameBtn.disabled = true;
+      return;
+    }
   }
 
   btnDisable(next: boolean = false) {
