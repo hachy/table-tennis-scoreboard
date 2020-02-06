@@ -101,6 +101,15 @@ class Scoreboard {
     let diff = Math.abs(a - b);
     if ((sum < 20 && (a >= 11 || b >= 11)) || (sum >= 20 && diff >= 2)) {
       this.btnDisable(false);
+      let gameSum = this.current.gameA + this.current.gameB;
+      if (this.current.scoreA > this.current.scoreB) {
+        this.current.gameA++;
+        this.gamegraphic[gameSum] = 1;
+      } else {
+        this.current.gameB++;
+        this.gamegraphic[gameSum] = 2;
+      }
+      this.display();
       w = true;
     }
     return w;
@@ -154,16 +163,6 @@ class Scoreboard {
     this.firstServer(this.player);
     this.btnDisable(true);
     this.undoBtn.disabled = true;
-
-    // game
-    let gameSum = this.current.gameA + this.current.gameB;
-    if (this.current.scoreA > this.current.scoreB) {
-      this.current.gameA++;
-      this.gamegraphic[gameSum] = 1;
-    } else {
-      this.current.gameB++;
-      this.gamegraphic[gameSum] = 2;
-    }
 
     // swap
     [this.current.scoreA, this.current.gameA, this.current.gameB, this.current.scoreB] = [0, this.current.gameB, this.current.gameA, 0];
