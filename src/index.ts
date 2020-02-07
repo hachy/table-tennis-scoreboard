@@ -129,6 +129,10 @@ class Scoreboard {
       this.history[prev].gameB,
       this.history[prev].scoreB
     ];
+
+    const gameSum = this.current.gameA + this.current.gameB;
+    this.gamegraphic[gameSum] = 0;
+
     this.display();
 
     if (this.win()) {
