@@ -21,16 +21,16 @@ class Scoreboard {
   undoBtn: HTMLButtonElement;
   changeEndsBtn: HTMLButtonElement;
   nextGameBtn: HTMLButtonElement;
-  player: number = 0;
+  player = 0;
 
   constructor() {
     this.history = [];
     this.ggHistory = [];
 
-    this.current = {scoreA: 0, gameA: 0, gameB: 0, scoreB: 0};
+    this.current = { scoreA: 0, gameA: 0, gameB: 0, scoreB: 0 };
     this.gamegraphic = Array(7).fill(0);
 
-    this.history.push(Object.assign({}, this.current));
+    this.history.push({ ...this.current });
     this.ggHistory.push(this.gamegraphic.slice());
 
     this.sA = document.getElementById('scoreA') as HTMLButtonElement;
@@ -45,7 +45,7 @@ class Scoreboard {
     this.changeEndsBtn = document.getElementById('change-ends') as HTMLButtonElement;
     this.nextGameBtn = document.getElementById('next-game') as HTMLButtonElement;
 
-    let resetBtn = document.getElementById('reset') as HTMLButtonElement;
+    const resetBtn = document.getElementById('reset') as HTMLButtonElement;
 
     this.sA.addEventListener('click', () => this.countUp(this.sA, true));
     this.sB.addEventListener('click', () => this.countUp(this.sB, false));
@@ -58,7 +58,7 @@ class Scoreboard {
     this.firstServer(this.player);
   }
 
-  firstServer(n: number = 0) {
+  firstServer(n = 0): void {
     this.player = n;
     this.serviceBtns[0].classList.remove('current');
     this.serviceBtns[1].classList.remove('current');
@@ -66,7 +66,7 @@ class Scoreboard {
   }
 
   countUp(el: HTMLButtonElement, isA: boolean): void {
-    el.textContent = `${parseInt(el.textContent!) + 1}`;
+    el.textContent = `${parseInt(`${el.textContent}`) + 1}`;
     if (isA) {
       this.current.scoreA++;
     } else {
@@ -80,12 +80,12 @@ class Scoreboard {
     this.service();
     this.win();
 
-    this.history.push(Object.assign({}, this.current));
+    this.history.push({ ...this.current });
     this.ggHistory.push(this.gamegraphic.slice());
   }
 
-  service() {
-    let sum = this.current.scoreA + this.current.scoreB;
+  service(): void {
+    const sum = this.current.scoreA + this.current.scoreB;
     if ((sum % 2 === 0 && sum < 20) || sum >= 20) {
       Array.prototype.forEach.call(this.serviceBtns, el => {
         el.classList.toggle('current');
@@ -95,13 +95,13 @@ class Scoreboard {
 
   win(): boolean {
     let w = false;
-    let a = this.current.scoreA;
-    let b = this.current.scoreB;
-    let sum = a + b;
-    let diff = Math.abs(a - b);
+    const a = this.current.scoreA;
+    const b = this.current.scoreB;
+    const sum = a + b;
+    const diff = Math.abs(a - b);
     if ((sum < 20 && (a >= 11 || b >= 11)) || (sum >= 20 && diff >= 2)) {
       this.btnDisable(false);
-      let gameSum = this.current.gameA + this.current.gameB;
+      const gameSum = this.current.gameA + this.current.gameB;
       if (this.current.scoreA > this.current.scoreB) {
         this.current.gameA++;
         this.gamegraphic[gameSum] = 1;
@@ -115,19 +115,19 @@ class Scoreboard {
     return w;
   }
 
-  undo() {
+  undo(): void {
     if (this.history.length <= 1) {
       return;
     }
     this.service();
 
     this.history.pop();
-    let prev = this.history.length - 1;
+    const prev = this.history.length - 1;
     [this.current.scoreA, this.current.gameA, this.current.gameB, this.current.scoreB] = [
       this.history[prev].scoreA,
       this.history[prev].gameA,
       this.history[prev].gameB,
-      this.history[prev].scoreB,
+      this.history[prev].scoreB
     ];
     this.display();
 
@@ -138,18 +138,18 @@ class Scoreboard {
     }
   }
 
-  resetAll() {
+  resetAll(): void {
     this.btnDisable(true);
     this.history = [];
     this.ggHistory = [];
-    this.current = {scoreA: 0, gameA: 0, gameB: 0, scoreB: 0};
+    this.current = { scoreA: 0, gameA: 0, gameB: 0, scoreB: 0 };
     this.gamegraphic = Array(7).fill(0);
-    this.history.push(Object.assign({}, this.current));
+    this.history.push({ ...this.current });
     this.ggHistory.push(this.gamegraphic.slice());
     this.display();
   }
 
-  changeEnds() {
+  changeEnds(): void {
     if (!this.win()) {
       this.swap();
 
@@ -159,44 +159,56 @@ class Scoreboard {
     }
   }
 
-  nextGame() {
+  nextGame(): void {
     this.firstServer(this.player);
     this.btnDisable(true);
     this.undoBtn.disabled = true;
 
     // swap
-    [this.current.scoreA, this.current.gameA, this.current.gameB, this.current.scoreB] = [0, this.current.gameB, this.current.gameA, 0];
+    [this.current.scoreA, this.current.gameA, this.current.gameB, this.current.scoreB] = [
+      0,
+      this.current.gameB,
+      this.current.gameA,
+      0
+    ];
     this.gamegraphic = this.gamegraphic.map(v => {
+      let n = v;
       if (v !== 0) {
-        v = 3 - v;
+        n = 3 - v;
       }
-      return v;
+      return n;
     });
 
     // reset
     this.history = [];
     this.ggHistory = [];
-    this.history.push(Object.assign({}, this.current));
+    this.history.push({ ...this.current });
     this.ggHistory.push(this.gamegraphic.slice());
 
     this.display();
   }
 
-  swap() {
-    [this.current.scoreA, this.current.gameA, this.current.gameB, this.current.scoreB] = [this.current.scoreB, this.current.gameB, this.current.gameA, this.current.scoreA];
+  swap(): void {
+    [this.current.scoreA, this.current.gameA, this.current.gameB, this.current.scoreB] = [
+      this.current.scoreB,
+      this.current.gameB,
+      this.current.gameA,
+      this.current.scoreA
+    ];
     this.gamegraphic = this.gamegraphic.map(v => {
+      let n = v;
       if (v !== 0) {
-        v = 3 - v;
+        n = 3 - v;
       }
-      return v;
+      return n;
     });
 
-    this.history.push(Object.assign({}, this.current));
+    this.history.push({ ...this.current });
     this.ggHistory.push(this.gamegraphic.slice());
     this.display();
   }
 
-  display() {
+  display(): void {
     this.sA.textContent = `${this.current.scoreA}`;
     this.gA.textContent = `${this.current.gameA}`;
     this.gB.textContent = `${this.current.gameB}`;
@@ -221,11 +233,10 @@ class Scoreboard {
       this.sB.disabled = true;
       this.changeEndsBtn.disabled = true;
       this.nextGameBtn.disabled = true;
-      return;
     }
   }
 
-  btnDisable(next: boolean = false) {
+  btnDisable(next = false): void {
     this.sA.disabled = !next;
     this.sB.disabled = !next;
     this.changeEndsBtn.disabled = !next;
