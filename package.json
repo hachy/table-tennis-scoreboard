@@ -4,8 +4,9 @@
   "description": "table tennis scoreboard",
   "main": "index.js",
   "scripts": {
+    "clean": "rm -rf ./dist && rm -rf ./.cache",
     "dev": "npx parcel src/index.html --open",
-    "build": "npx parcel build src/index.html --no-source-maps --public-url ./",
+    "build": "npm run clean && npx parcel build src/index.html --no-source-maps --public-url ./",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "hachy",
